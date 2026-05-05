@@ -1,0 +1,149 @@
+.map-section {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-stage {
+  position: relative;
+  width: 80vw;
+  height: min(72vh, calc(80vw * 0.58));
+  margin: 0 auto;
+  background: transparent;
+  overflow: visible;
+}
+
+.map-wave-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  object-position: center center;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  z-index: 1;
+}
+
+.map-step-list {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.map-step-marker {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%);
+  width: 6.34%;
+  min-width: 36px;
+  max-width: 76px;
+  aspect-ratio: 1 / 1;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.map-step-icon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.map-step-label {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 78%;
+  font-family: NanumGothic, Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  font-size: clamp(14px, 1.55vw, 24px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: #11110f;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75),
+    0 -1px 0 rgba(255, 255, 255, 0.65),
+    1px 0 0 rgba(255, 255, 255, 0.65),
+    -1px 0 0 rgba(255, 255, 255, 0.65),
+    0 2px 4px rgba(0, 0, 0, 0.16);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.map-step-label.is-two-digits {
+  font-size: clamp(12px, 1.35vw, 20px);
+  letter-spacing: -0.08em;
+}
+
+.map-step-label.is-three-digits {
+  font-size: clamp(10px, 1.05vw, 16px);
+  letter-spacing: -0.1em;
+}
+
+.map-step-marker:hover {
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.map-step-marker:focus-visible {
+  outline: 2px solid rgba(42, 64, 113, 0.8);
+  outline-offset: 4px;
+  border-radius: 999px;
+}
+
+@media (max-width: 1599px) {
+  .map-stage {
+    width: 80vw;
+    height: min(72vh, calc(80vw * 0.6));
+  }
+}
+
+@media (min-width: 1600px) {
+  .map-stage {
+    width: 80vw;
+    height: min(68vh, calc(80vw * 0.52));
+  }
+}
+
+@media (min-width: 2000px) {
+  .map-stage {
+    width: 80vw;
+    height: min(66vh, calc(80vw * 0.48));
+  }
+}
+
+@media (max-width: 768px) {
+  .map-stage {
+    width: 90vw;
+    height: min(68vh, calc(90vw * 0.75));
+  }
+
+  .map-step-label {
+    font-size: clamp(12px, 3.5vw, 18px);
+  }
+}

@@ -1,0 +1,160 @@
+﻿.hero-section {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.hero-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Canvas: PNG frame와 동일한 크기로 모든 오버레이를 묶음 ─────────────
+   인트로 애니메이션 시 transform: scale(X)만 걸면 내부 요소 전체가
+   비율을 유지하며 함께 축소/확대됩니다.                              */
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+}
+
+/* Top-left logo — Figma 1200px 기준: left 12.17%, width 9.33% */
+.hero-logo {
+  position: absolute;
+  top: 2.5%;
+  left: 12.17%;
+  width: 9.33%;
+  height: auto;
+  z-index: 20;
+}
+
+/* Top-right auth area */
+.hero-auth {
+  position: absolute;
+  top: 2.5%;
+  right: 3.5%;
+  display: flex;
+  align-items: center;
+  gap: 0.8%;
+  z-index: 30;
+}
+
+.hero-login-btn {
+  height: 3.2%;
+  padding: 0 1.6%;
+
+  border-radius: 999px;
+  background: rgba(246, 244, 235, 0.92);
+  border: 1px solid rgba(42, 64, 113, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  font-family: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  font-size: clamp(12px, 1vw, 15px);
+  font-weight: 600;
+  color: #33312d;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+
+  transition: background 0.18s, box-shadow 0.18s;
+}
+
+.hero-login-btn:hover {
+  background: rgba(246, 244, 235, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.13);
+}
+
+/* Title group — Figma 1200px 기준: left 14.58%, title 11.83vw, subtitle 3.5vw */
+.hero-copy {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 14.58%;
+  z-index: 20;
+}
+
+.hero-title {
+  margin: 0;
+
+  font-family: "Nanum Brush Script", cursive;
+  font-size: clamp(32px, 11.83vw, 172px);
+  font-weight: 400;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+
+  color: #11110f;
+}
+
+.hero-subtitle {
+  margin: clamp(12px, 2.5vh, 40px) 0 0;
+
+  font-family: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  font-size: clamp(13px, 3.5vw, 50px);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.03em;
+
+  color: rgba(31, 31, 28, 0.58);
+}
+
+/* Character — Figma 1200×647 기준: right 24.67%, height 82.23% */
+.hero-character {
+  position: absolute;
+  bottom: 0;
+  right: 24.67%;
+
+  width: auto;
+  height: 82.23%;
+
+  z-index: 18;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .hero-logo {
+    top: 3.5%;
+    left: 7%;
+    width: 22%;
+  }
+
+  .hero-auth {
+    top: 3.5%;
+    right: 5%;
+  }
+
+  .hero-login-btn {
+    height: auto;
+    padding: 10px 16px;
+  }
+
+  .hero-copy {
+    top: 48%;
+    left: 8%;
+  }
+
+  .hero-title {
+    font-size: clamp(46px, 18vw, 108px);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(16px, 5vw, 28px);
+  }
+
+  .hero-character {
+    right: 8%;
+    height: 64%;
+  }
+}
+
+
