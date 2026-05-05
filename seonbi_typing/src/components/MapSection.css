@@ -9,6 +9,44 @@
   align-items: center;
 }
 
+.map-nav-button {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: clamp(44px, 4vw, 64px);
+  height: clamp(44px, 4vw, 64px);
+  border: 1px solid rgba(31, 31, 28, 0.14);
+  border-radius: 999px;
+  background: rgba(250, 246, 237, 0.94);
+  box-shadow: 0 16px 24px rgba(27, 21, 13, 0.1);
+  color: #171713;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 2.6vw, 40px);
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.map-nav-button:hover {
+  transform: translateY(-50%) scale(1.04);
+  background: rgba(255, 252, 244, 0.98);
+  box-shadow: 0 18px 28px rgba(27, 21, 13, 0.14);
+}
+
+.map-nav-button:focus-visible {
+  outline: 2px solid rgba(42, 64, 113, 0.8);
+  outline-offset: 4px;
+}
+
+.map-nav-button--prev {
+  left: clamp(4px, 1.2vw, 18px);
+}
+
+.map-nav-button--next {
+  right: clamp(4px, 1.2vw, 18px);
+}
+
 .map-stage {
   position: relative;
   width: 80vw;
@@ -16,6 +54,26 @@
   margin: 0 auto;
   background: transparent;
   overflow: visible;
+}
+
+.map-page-indicator {
+  position: absolute;
+  top: clamp(10px, 1.3vw, 18px);
+  right: clamp(10px, 1.6vw, 22px);
+  z-index: 2;
+  min-width: 74px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(248, 244, 236, 0.9);
+  border: 1px solid rgba(31, 31, 28, 0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(31, 31, 28, 0.7);
 }
 
 .map-wave-image {
@@ -57,6 +115,32 @@
   align-items: center;
   justify-content: center;
   pointer-events: auto;
+  transition: transform 0.18s ease;
+}
+
+.map-step-marker::before {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+  z-index: 0;
+}
+
+.map-step-marker.is-solved::before {
+  background: radial-gradient(circle at 30% 30%, rgba(181, 220, 169, 0.95), rgba(108, 159, 112, 0.88));
+  box-shadow:
+    0 8px 18px rgba(73, 110, 74, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.map-step-marker.is-current::before {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 237, 181, 0.96), rgba(213, 173, 82, 0.9));
+  box-shadow:
+    0 8px 18px rgba(122, 89, 29, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .map-step-icon {
@@ -69,6 +153,27 @@
   user-select: none;
   pointer-events: none;
   z-index: 1;
+}
+
+.map-step-solved-badge {
+  position: absolute;
+  right: -6%;
+  top: -8%;
+  z-index: 3;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(28, 77, 46, 0.92);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: clamp(9px, 0.72vw, 11px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  box-shadow: 0 8px 16px rgba(28, 77, 46, 0.2);
 }
 
 .map-step-label {
@@ -94,6 +199,17 @@
     0 2px 4px rgba(0, 0, 0, 0.16);
   pointer-events: none;
   font-variant-numeric: tabular-nums;
+}
+
+.map-step-marker.is-solved .map-step-label {
+  color: #14311d;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.82),
+    0 2px 6px rgba(32, 61, 32, 0.18);
+}
+
+.map-step-marker.is-current .map-step-label {
+  color: #5b3e10;
 }
 
 .map-step-label.is-two-digits {
@@ -138,9 +254,39 @@
 }
 
 @media (max-width: 768px) {
+  .map-nav-button {
+    width: 42px;
+    height: 42px;
+    font-size: 28px;
+  }
+
+  .map-nav-button--prev {
+    left: 0;
+  }
+
+  .map-nav-button--next {
+    right: 0;
+  }
+
   .map-stage {
     width: 90vw;
     height: min(68vh, calc(90vw * 0.75));
+  }
+
+  .map-page-indicator {
+    top: 8px;
+    right: 8px;
+    min-width: 66px;
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .map-step-solved-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 8px;
   }
 
   .map-step-label {

@@ -3,6 +3,7 @@
   width: 100%;
   height: 100%;
   background: transparent;
+  overflow: hidden;
 }
 
 .hero-frame {
@@ -28,50 +29,487 @@
   transform-origin: center center;
 }
 
-/* Top-left logo — Figma 1200px 기준: left 12.17%, width 9.33% */
+.hero-top-bar {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
 .hero-logo {
   position: absolute;
+  height: auto;
+  z-index: 20;
+  user-select: none;
+  pointer-events: none;
+}
+
+.hero-logo-button {
+  position: absolute;
+  z-index: 20;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.hero-logo-button:focus-visible {
+  outline: 2px solid rgba(42, 64, 113, 0.75);
+  outline-offset: 2px;
+}
+
+.hero-logo-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+.hero-auth {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  z-index: 40;
+  pointer-events: auto;
+}
+
+.hero-top-bar--hero .hero-logo,
+.hero-top-bar--hero .hero-logo-button {
   top: 2.5%;
   left: 12.17%;
   width: 9.33%;
-  height: auto;
-  z-index: 20;
 }
 
-/* Top-right auth area */
-.hero-auth {
-  position: absolute;
+.hero-top-bar--hero .hero-auth {
   top: 2.5%;
   right: 3.5%;
+}
+
+.hero-top-bar--compact .hero-logo,
+.hero-top-bar--compact .hero-logo-button {
+  top: 50%;
+  left: clamp(22px, 5.6vw, 86px);
+  width: clamp(138px, 11.1vw, 198px);
+  transform: translateY(-50%);
+}
+
+.hero-top-bar--compact .hero-auth {
+  top: 50%;
+  right: clamp(16px, 2.6vw, 42px);
+  transform: translateY(-50%);
+}
+
+.hero-auth-logged-in {
   display: flex;
   align-items: center;
-  gap: 0.8%;
-  z-index: 30;
+  gap: 12px;
 }
 
-.hero-login-btn {
-  height: 3.2%;
-  padding: 0 1.6%;
-
+.hero-streak-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 20px 0 14px;
   border-radius: 999px;
-  background: rgba(246, 244, 235, 0.92);
-  border: 1px solid rgba(42, 64, 113, 0.25);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: rgba(247, 245, 238, 0.96);
+  border: 1px solid rgba(31, 31, 28, 0.18);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
 
+.hero-streak-icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+}
+
+.hero-streak-text {
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: clamp(15px, 1.5vw, 20px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #11110f;
+}
+
+.hero-login-trigger {
+  min-width: 74px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(246, 244, 235, 0.94);
+  border: 1px solid rgba(31, 31, 28, 0.18);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   font-family: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
-  font-size: clamp(12px, 1vw, 15px);
+  font-size: 14px;
   font-weight: 600;
-  color: #33312d;
-  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #1f1f1c;
   white-space: nowrap;
   cursor: pointer;
-
-  transition: background 0.18s, box-shadow 0.18s;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
 }
 
-.hero-login-btn:hover {
-  background: rgba(246, 244, 235, 1);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.13);
+.hero-login-trigger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  background: rgba(255, 252, 245, 0.98);
+}
+
+.hero-login-trigger:active {
+  transform: translateY(0);
+}
+
+.hero-login-trigger:focus-visible {
+  outline: 2px solid rgba(42, 64, 113, 0.75);
+  outline-offset: 2px;
+}
+
+.hero-login-trigger:disabled,
+.hero-login-close:disabled,
+.auth-tab:disabled,
+.hero-login-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.hero-grade-wrap,
+.hero-profile-wrap {
+  position: relative;
+}
+
+.hero-grade-trigger {
+  width: 58px;
+  height: 54px;
+  padding: 0;
+  border: 1px solid rgba(31, 31, 28, 0.28);
+  border-radius: 18px;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.hero-grade-trigger:hover {
+  transform: translateY(-1px);
+  background: transparent;
+  box-shadow: none;
+  border-color: rgba(31, 31, 28, 0.44);
+}
+
+.hero-grade-wrap.is-open .hero-grade-trigger {
+  border-color: rgba(31, 31, 28, 0.52);
+}
+
+.hero-grade-trigger-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+.hero-grade-trigger:focus-visible,
+.hero-profile-trigger:focus-visible,
+.hero-profile-menu-button:focus-visible {
+  outline: 2px solid rgba(42, 64, 113, 0.75);
+  outline-offset: 2px;
+}
+
+.hero-profile-trigger {
+  width: 58px;
+  height: 54px;
+  padding: 0;
+  border: 1px solid rgba(31, 31, 28, 0.18);
+  border-radius: 18px;
+  background: rgba(247, 245, 238, 0.96);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.hero-profile-trigger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.16);
+  background: rgba(255, 252, 245, 0.98);
+}
+
+.hero-profile-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+.hero-profile-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 188px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(247, 245, 238, 0.98);
+  border: 1px solid rgba(31, 31, 28, 0.1);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hero-profile-menu-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(31, 31, 28, 0.1);
+}
+
+.hero-profile-menu-name {
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f1f1c;
+}
+
+.hero-profile-menu-rank {
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(31, 31, 28, 0.62);
+}
+
+.hero-profile-menu-button {
+  width: 100%;
+  height: 40px;
+  border: 0;
+  border-radius: 12px;
+  background: #2a2a2a;
+  color: #ffffff;
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.hero-profile-menu-button--secondary {
+  background: rgba(90, 130, 157, 0.12);
+  color: #4a6d84;
+}
+
+.hero-profile-menu-button:hover {
+  transform: translateY(-1px);
+  background: #1f1f1f;
+}
+
+.hero-profile-menu-button--secondary:hover {
+  background: rgba(90, 130, 157, 0.2);
+}
+
+.hero-grade-panel {
+  position: absolute;
+  top: calc(100% + 16px);
+  right: -58px;
+  width: min(72vw, 720px);
+  min-height: 136px;
+  padding: 32px 28px 24px;
+  border-radius: 28px;
+  background: rgba(232, 232, 232, 0.98);
+  border: 1px solid rgba(31, 31, 28, 0.14);
+  box-shadow: 0 22px 36px rgba(0, 0, 0, 0.18);
+}
+
+.hero-grade-current-rank {
+  position: absolute;
+  top: -14px;
+  left: 22px;
+  min-width: 74px;
+  height: 30px;
+  padding: 0 14px;
+  border: 2px solid rgba(31, 31, 28, 0.35);
+  border-radius: 12px;
+  background: rgba(247, 245, 238, 0.98);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #33312d;
+}
+
+.hero-grade-track {
+  position: relative;
+  min-height: 84px;
+}
+
+.hero-grade-track-line {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  top: 44px;
+  height: 2px;
+  background: rgba(31, 31, 28, 0.78);
+}
+
+.hero-grade-track-dots {
+  position: absolute;
+  left: 36px;
+  right: 36px;
+  top: 37px;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  align-items: center;
+}
+
+.hero-grade-track-dot {
+  width: 14px;
+  height: 14px;
+  justify-self: center;
+  border-radius: 999px;
+  background: #9b9b9b;
+}
+
+.hero-grade-track-dot.is-active {
+  background: #7d7d7d;
+}
+
+.hero-grade-icons {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+}
+
+.hero-grade-icon-slot {
+  position: relative;
+  z-index: 1;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-grade-icon-slot.is-current {
+  transform: scale(1.08);
+}
+
+.hero-grade-icon-slot.is-upcoming {
+  opacity: 0.36;
+  filter: grayscale(1);
+}
+
+.hero-grade-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.hero-top-bar--compact .hero-auth-logged-in {
+  gap: 8px;
+}
+
+.hero-top-bar--compact .hero-streak-pill {
+  min-height: 38px;
+  padding: 0 12px 0 10px;
+  gap: 8px;
+}
+
+.hero-top-bar--compact .hero-streak-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.hero-top-bar--compact .hero-streak-text {
+  font-size: 12px;
+}
+
+.hero-top-bar--compact .hero-grade-trigger {
+  width: 42px;
+  height: 38px;
+  border-radius: 12px;
+}
+
+.hero-top-bar--compact .hero-grade-trigger-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.hero-top-bar--compact .hero-profile-trigger {
+  width: 42px;
+  height: 38px;
+  border-radius: 12px;
+}
+
+.hero-top-bar--compact .hero-profile-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.hero-top-bar--compact .hero-login-trigger {
+  min-width: 68px;
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+.hero-top-bar--compact .hero-profile-menu {
+  min-width: 164px;
+}
+
+.hero-top-bar--compact .hero-grade-panel {
+  top: calc(100% + 12px);
+  right: -18px;
+  width: min(72vw, 520px);
+  padding: 28px 16px 20px;
+}
+
+.hero-top-bar--compact .hero-grade-current-rank {
+  left: 16px;
+}
+
+.hero-top-bar--compact .hero-grade-track-line {
+  left: 24px;
+  right: 24px;
+  top: 32px;
+}
+
+.hero-top-bar--compact .hero-grade-track-dots {
+  left: 26px;
+  right: 26px;
+  top: 25px;
+}
+
+.hero-top-bar--compact .hero-grade-track-dot {
+  width: 10px;
+  height: 10px;
+}
+
+.hero-top-bar--compact .hero-grade-icons {
+  padding: 0 10px;
+}
+
+.hero-top-bar--compact .hero-grade-icon-slot {
+  width: 52px;
+  height: 52px;
 }
 
 /* Title group — Figma 1200px 기준: left 14.58%, title 11.83vw, subtitle 3.5vw */
@@ -81,6 +519,10 @@
   transform: translateY(-50%);
   left: 14.58%;
   z-index: 20;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
 }
 
 .hero-title {
@@ -114,28 +556,378 @@
   right: 24.67%;
 
   width: auto;
-  height: 82.23%;
+  height: min(82.23%, 40vw);
 
   z-index: 18;
   pointer-events: none;
   user-select: none;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
+}
+
+.hero-section.is-login-open .hero-copy,
+.hero-section.is-login-open .hero-character {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hero-section.is-login-open .hero-copy {
+  transform: translateY(calc(-50% + 10px));
+}
+
+.hero-section.is-login-open .hero-character {
+  transform: translateY(12px);
+}
+
+.hero-login-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: rgba(31, 31, 28, 0.08);
+  backdrop-filter: blur(2px);
+  animation: hero-login-overlay-fade 0.18s ease-out;
+}
+
+.hero-login-card {
+  position: relative;
+  width: min(88vw, 877px);
+  min-height: min(62vh, 440px);
+  border-radius: 33px;
+  background: #d9d9d9;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.16);
+  display: grid;
+  grid-template-columns: 1fr 1px 1.15fr;
+  align-items: center;
+  padding: clamp(28px, 4vw, 48px);
+  animation: hero-login-card-in 0.22s ease-out;
+}
+
+.hero-login-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(31, 31, 28, 0.08);
+  color: #1f1f1c;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.hero-login-close:hover {
+  background: rgba(31, 31, 28, 0.14);
+  transform: scale(1.04);
+}
+
+.hero-login-close:focus-visible {
+  outline: 2px solid rgba(42, 64, 113, 0.75);
+  outline-offset: 2px;
+}
+
+.hero-login-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: clamp(20px, 3vw, 40px);
+}
+
+.hero-login-logo {
+  width: min(100%, 240px);
+  height: auto;
+  display: block;
+}
+
+.hero-login-divider {
+  width: 1px;
+  height: min(100%, 220px);
+  justify-self: center;
+  background: rgba(31, 31, 28, 0.85);
+}
+
+.hero-login-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-left: clamp(20px, 3vw, 40px);
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.auth-tab {
+  height: 36px;
+  border: 1px solid rgba(31, 31, 28, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  color: rgba(31, 31, 28, 0.62);
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.auth-tab:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.auth-tab.is-active {
+  background: #2a2a2a;
+  border-color: #2a2a2a;
+  color: #ffffff;
+}
+
+.auth-tab:focus-visible {
+  outline: 2px solid rgba(42, 64, 113, 0.75);
+  outline-offset: 2px;
+}
+
+.hero-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hero-login-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hero-login-label > span {
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f1f1c;
+}
+
+.hero-login-label input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid rgba(31, 31, 28, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.35);
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 14px;
+  color: #1f1f1c;
+}
+
+.hero-login-label input::placeholder {
+  color: rgba(31, 31, 28, 0.45);
+}
+
+.hero-login-label input:focus {
+  outline: none;
+  border-color: rgba(42, 64, 113, 0.6);
+  box-shadow: 0 0 0 3px rgba(42, 64, 113, 0.12);
+}
+
+.hero-login-submit {
+  align-self: center;
+  margin-top: 4px;
+  min-width: 120px;
+  height: 44px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 12px;
+  background: #2a2a2a;
+  color: #ffffff;
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.hero-login-submit:hover {
+  transform: translateY(-1px);
+  background: #1f1f1f;
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.2);
+}
+
+.hero-login-submit:active {
+  transform: translateY(0);
+}
+
+.hero-login-submit:focus-visible {
+  outline: 2px solid rgba(42, 64, 113, 0.75);
+  outline-offset: 2px;
+}
+
+.auth-message {
+  margin: 0;
+  min-height: 18px;
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: rgba(42, 64, 113, 0.92);
+}
+
+@keyframes hero-login-overlay-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-login-card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (max-width: 768px) {
-  .hero-logo {
+  .hero-top-bar--hero .hero-logo,
+  .hero-top-bar--hero .hero-logo-button {
     top: 3.5%;
     left: 7%;
     width: 22%;
   }
 
-  .hero-auth {
+  .hero-top-bar--hero .hero-auth {
     top: 3.5%;
     right: 5%;
   }
 
-  .hero-login-btn {
-    height: auto;
-    padding: 10px 16px;
+  .hero-top-bar--hero .hero-auth-logged-in,
+  .hero-top-bar--compact .hero-auth-logged-in {
+    gap: 8px;
+  }
+
+  .hero-top-bar--hero .hero-streak-pill,
+  .hero-top-bar--compact .hero-streak-pill {
+    min-height: 42px;
+    padding: 0 14px 0 10px;
+    gap: 8px;
+  }
+
+  .hero-top-bar--hero .hero-streak-icon,
+  .hero-top-bar--compact .hero-streak-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .hero-top-bar--hero .hero-streak-text,
+  .hero-top-bar--compact .hero-streak-text {
+    font-size: 13px;
+  }
+
+  .hero-top-bar--hero .hero-grade-trigger,
+  .hero-top-bar--compact .hero-grade-trigger {
+    width: 46px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  .hero-top-bar--hero .hero-grade-trigger-icon,
+  .hero-top-bar--compact .hero-grade-trigger-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .hero-top-bar--hero .hero-profile-trigger,
+  .hero-top-bar--compact .hero-profile-trigger {
+    width: 46px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  .hero-top-bar--hero .hero-profile-icon,
+  .hero-top-bar--compact .hero-profile-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .hero-top-bar--hero .hero-profile-menu,
+  .hero-top-bar--compact .hero-profile-menu {
+    min-width: 164px;
+  }
+
+  .hero-top-bar--hero .hero-grade-panel,
+  .hero-top-bar--compact .hero-grade-panel {
+    right: -26px;
+    width: min(88vw, 460px);
+    padding: 28px 16px 20px;
+  }
+
+  .hero-top-bar--hero .hero-grade-current-rank,
+  .hero-top-bar--compact .hero-grade-current-rank {
+    left: 16px;
+  }
+
+  .hero-top-bar--hero .hero-grade-track-line,
+  .hero-top-bar--compact .hero-grade-track-line {
+    left: 24px;
+    right: 24px;
+    top: 32px;
+  }
+
+  .hero-top-bar--hero .hero-grade-track-dots,
+  .hero-top-bar--compact .hero-grade-track-dots {
+    left: 26px;
+    right: 26px;
+    top: 25px;
+  }
+
+  .hero-top-bar--hero .hero-grade-track-dot,
+  .hero-top-bar--compact .hero-grade-track-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .hero-top-bar--hero .hero-grade-icons,
+  .hero-top-bar--compact .hero-grade-icons {
+    padding: 0 10px;
+  }
+
+  .hero-top-bar--hero .hero-grade-icon-slot,
+  .hero-top-bar--compact .hero-grade-icon-slot {
+    width: 52px;
+    height: 52px;
+  }
+
+  .hero-login-trigger {
+    min-width: 70px;
+    height: 36px;
+    padding: 0 14px;
+    font-size: 13px;
   }
 
   .hero-copy {
@@ -154,6 +946,55 @@
   .hero-character {
     right: 8%;
     height: 64%;
+  }
+
+  .hero-top-bar--compact .hero-logo,
+  .hero-top-bar--compact .hero-logo-button {
+    left: 16px;
+    width: 132px;
+  }
+
+  .hero-top-bar--compact .hero-auth {
+    right: 12px;
+  }
+
+  .hero-login-overlay {
+    padding: 20px;
+  }
+
+  .hero-login-card {
+    width: min(92vw, 520px);
+    max-height: 86vh;
+    overflow-y: auto;
+    min-height: auto;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 28px 24px;
+  }
+
+  .hero-login-left {
+    padding-right: 0;
+  }
+
+  .hero-login-divider {
+    display: none;
+  }
+
+  .hero-login-panel {
+    padding-left: 0;
+  }
+
+  .auth-tabs {
+    max-width: none;
+  }
+
+  .hero-login-logo {
+    width: 180px;
+  }
+
+  .hero-login-close {
+    top: 14px;
+    right: 14px;
   }
 }
 

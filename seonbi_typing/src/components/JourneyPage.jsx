@@ -4,7 +4,7 @@ import MapSection from "./MapSection";
 
 const ORNAMENT_SRC = `${process.env.PUBLIC_URL}/intro/intro-factor.svg`;
 
-function JourneyPage() {
+function JourneyPage({ authUser, onAuthChange, onLogout, onOpenHistory, onSelectProblem }) {
   return (
     <main
       className="journey-page"
@@ -13,7 +13,12 @@ function JourneyPage() {
       }}
     >
       <section className="journey-panel hero-panel">
-        <HeroSection />
+        <HeroSection
+          authUser={authUser}
+          onAuthChange={onAuthChange}
+          onLogout={onLogout}
+          onOpenHistory={onOpenHistory}
+        />
       </section>
 
       <section className="journey-panel map-panel" aria-label="학습 지도">
@@ -26,7 +31,10 @@ function JourneyPage() {
             draggable="false"
           />
 
-          <MapSection />
+          <MapSection
+            onSelectStep={onSelectProblem}
+            totalSolvedCount={authUser?.totalSolvedCount ?? 0}
+          />
         </div>
       </section>
 
