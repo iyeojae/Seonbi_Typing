@@ -61,49 +61,6 @@
   filter: drop-shadow(0 14px 20px rgba(31, 31, 28, 0.08));
 }
 
-.team-panel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-}
-
-.team-panel-inner {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.team-card {
-  width: min(80vw, 960px);
-  aspect-ratio: 960 / 133;
-  box-sizing: border-box;
-  border-radius: clamp(14px, 1.8vw, 24px);
-  border: 2px solid rgba(31, 31, 28, 0.22);
-  background: rgba(210, 210, 210, 0.86);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: clamp(12px, 1.4vw, 22px);
-  padding: 0 clamp(28px, 4vw, 70px);
-  font-family: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
-  color: rgba(31, 31, 28, 0.62);
-}
-
-.team-card-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  font-size: clamp(13px, 1.15vw, 17px);
-  letter-spacing: -0.03em;
-}
-
-.team-card-support {
-  grid-column: 2 / 4;
-  justify-self: end;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .journey-page {
     scroll-behavior: auto;
@@ -119,15 +76,5 @@
   .map-page-factor {
     width: 104px;
     margin-bottom: 8px;
-  }
-
-  .team-card {
-    width: 86vw;
-    padding: 0 24px;
-    border-radius: 16px;
-  }
-
-  .team-card-row {
-    font-size: 12px;
   }
 }

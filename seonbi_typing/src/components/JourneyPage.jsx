@@ -37,23 +37,6 @@ function JourneyPage({ authUser, onAuthChange, onLogout, onOpenHistory, onSelect
           />
         </div>
       </section>
-
-      <section className="journey-panel team-panel" aria-label="팀 소개">
-        <div className="team-panel-inner">
-          <div className="team-card">
-            <div className="team-card-row">
-              <span>디자인 이가현</span>
-              <span>BE 찬우</span>
-              <span>FB 찬우</span>
-            </div>
-
-            <div className="team-card-row">
-              <span>장소</span>
-              <span className="team-card-support">고객지원 · 010-****-****</span>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
