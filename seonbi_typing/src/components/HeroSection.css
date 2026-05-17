@@ -1,9 +1,28 @@
 ﻿.hero-section {
+  --hero-fixed-header-height: clamp(78px, 8vw, 108px);
   position: relative;
   width: 100%;
   height: 100%;
   background: transparent;
   overflow: hidden;
+}
+
+.hero-stage {
+  position: relative;
+  width: 100%;
+  height: calc(100% - var(--hero-fixed-header-height));
+  margin-top: var(--hero-fixed-header-height);
+  overflow: hidden;
+}
+
+.hero-scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .hero-frame {
@@ -31,9 +50,29 @@
 
 .hero-top-bar {
   position: absolute;
-  inset: 0;
   z-index: 40;
   pointer-events: none;
+}
+
+.hero-top-bar--hero,
+.hero-top-bar--compact {
+  inset: 0;
+}
+
+.hero-top-bar--fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--hero-fixed-header-height);
+  z-index: 80;
+  pointer-events: auto;
+  background-color: rgba(243, 239, 227, 0.96);
+  background-image: var(--hero-fixed-header-bg-image);
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  box-shadow: 0 14px 28px rgba(48, 39, 24, 0.14);
 }
 
 .hero-logo {
@@ -101,10 +140,28 @@
   transform: translateY(-50%);
 }
 
+.hero-top-bar--fixed .hero-logo,
+.hero-top-bar--fixed .hero-logo-button {
+  top: 50%;
+  left: clamp(20px, 4.4vw, 68px);
+  width: clamp(130px, 10.2vw, 192px);
+  transform: translateY(-50%);
+}
+
+.hero-top-bar--fixed .hero-auth {
+  top: 50%;
+  right: clamp(18px, 3vw, 44px);
+  transform: translateY(-50%);
+}
+
 .hero-auth-logged-in {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.hero-top-bar--fixed .hero-auth-logged-in {
+  gap: clamp(16px, 1.8vw, 28px);
 }
 
 .hero-streak-pill {
@@ -117,6 +174,12 @@
   background: rgba(247, 245, 238, 0.96);
   border: 1px solid rgba(31, 31, 28, 0.18);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.hero-top-bar--fixed .hero-streak-pill {
+  min-height: 50px;
+  padding: 0 24px 0 14px;
+  gap: 12px;
 }
 
 .hero-streak-icon {
@@ -132,6 +195,10 @@
   line-height: 1;
   letter-spacing: -0.04em;
   color: #11110f;
+}
+
+.hero-top-bar--fixed .hero-streak-text {
+  font-size: clamp(14px, 1.2vw, 18px);
 }
 
 .hero-login-trigger {
@@ -189,8 +256,8 @@
   width: 58px;
   height: 54px;
   padding: 0;
-  border: 1px solid rgba(31, 31, 28, 0.28);
-  border-radius: 18px;
+  border: 0;
+  border-radius: 0;
   background: transparent;
   box-shadow: none;
   cursor: pointer;
@@ -204,11 +271,10 @@
   transform: translateY(-1px);
   background: transparent;
   box-shadow: none;
-  border-color: rgba(31, 31, 28, 0.44);
 }
 
 .hero-grade-wrap.is-open .hero-grade-trigger {
-  border-color: rgba(31, 31, 28, 0.52);
+  transform: translateY(-1px);
 }
 
 .hero-grade-trigger-icon {
@@ -217,6 +283,16 @@
   object-fit: contain;
   display: block;
   pointer-events: none;
+}
+
+.hero-top-bar--fixed .hero-grade-trigger {
+  width: 46px;
+  height: 46px;
+}
+
+.hero-top-bar--fixed .hero-grade-trigger-icon {
+  width: 40px;
+  height: 40px;
 }
 
 .hero-grade-trigger:focus-visible,
@@ -253,6 +329,16 @@
   object-fit: contain;
   display: block;
   pointer-events: none;
+}
+
+.hero-top-bar--fixed .hero-profile-trigger {
+  width: 52px;
+  height: 48px;
+}
+
+.hero-top-bar--fixed .hero-profile-icon {
+  width: 34px;
+  height: 34px;
 }
 
 .hero-profile-menu {
@@ -512,6 +598,22 @@
   height: 52px;
 }
 
+.hero-top-bar--fixed .hero-login-trigger {
+  min-width: 76px;
+  height: 40px;
+  padding: 0 18px;
+}
+
+.hero-top-bar--fixed .hero-profile-menu {
+  top: calc(100% + 14px);
+}
+
+.hero-top-bar--fixed .hero-grade-panel {
+  top: calc(100% + 14px);
+  right: -30px;
+  width: min(72vw, 620px);
+}
+
 /* Title group — Figma 1200px 기준: left 14.58%, title 11.83vw, subtitle 3.5vw */
 .hero-copy {
   position: absolute;
@@ -583,9 +685,9 @@
 }
 
 .hero-login-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 30;
+  z-index: 90;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -814,6 +916,10 @@
 }
 
 @media (max-width: 768px) {
+  .hero-section {
+    --hero-fixed-header-height: 74px;
+  }
+
   .hero-top-bar--hero .hero-logo,
   .hero-top-bar--hero .hero-logo-button {
     top: 3.5%;
@@ -826,99 +932,124 @@
     right: 5%;
   }
 
+  .hero-top-bar--fixed .hero-logo,
+  .hero-top-bar--fixed .hero-logo-button {
+    left: 16px;
+    width: 124px;
+  }
+
+  .hero-top-bar--fixed .hero-auth {
+    right: 12px;
+  }
+
   .hero-top-bar--hero .hero-auth-logged-in,
-  .hero-top-bar--compact .hero-auth-logged-in {
+  .hero-top-bar--compact .hero-auth-logged-in,
+  .hero-top-bar--fixed .hero-auth-logged-in {
     gap: 8px;
   }
 
   .hero-top-bar--hero .hero-streak-pill,
-  .hero-top-bar--compact .hero-streak-pill {
+  .hero-top-bar--compact .hero-streak-pill,
+  .hero-top-bar--fixed .hero-streak-pill {
     min-height: 42px;
     padding: 0 14px 0 10px;
     gap: 8px;
   }
 
   .hero-top-bar--hero .hero-streak-icon,
-  .hero-top-bar--compact .hero-streak-icon {
+  .hero-top-bar--compact .hero-streak-icon,
+  .hero-top-bar--fixed .hero-streak-icon {
     width: 28px;
     height: 28px;
   }
 
   .hero-top-bar--hero .hero-streak-text,
-  .hero-top-bar--compact .hero-streak-text {
+  .hero-top-bar--compact .hero-streak-text,
+  .hero-top-bar--fixed .hero-streak-text {
     font-size: 13px;
   }
 
   .hero-top-bar--hero .hero-grade-trigger,
-  .hero-top-bar--compact .hero-grade-trigger {
+  .hero-top-bar--compact .hero-grade-trigger,
+  .hero-top-bar--fixed .hero-grade-trigger {
     width: 46px;
     height: 42px;
-    border-radius: 14px;
   }
 
   .hero-top-bar--hero .hero-grade-trigger-icon,
-  .hero-top-bar--compact .hero-grade-trigger-icon {
+  .hero-top-bar--compact .hero-grade-trigger-icon,
+  .hero-top-bar--fixed .hero-grade-trigger-icon {
     width: 30px;
     height: 30px;
   }
 
   .hero-top-bar--hero .hero-profile-trigger,
-  .hero-top-bar--compact .hero-profile-trigger {
+  .hero-top-bar--compact .hero-profile-trigger,
+  .hero-top-bar--fixed .hero-profile-trigger {
     width: 46px;
     height: 42px;
     border-radius: 14px;
   }
 
   .hero-top-bar--hero .hero-profile-icon,
-  .hero-top-bar--compact .hero-profile-icon {
+  .hero-top-bar--compact .hero-profile-icon,
+  .hero-top-bar--fixed .hero-profile-icon {
     width: 30px;
     height: 30px;
   }
 
   .hero-top-bar--hero .hero-profile-menu,
-  .hero-top-bar--compact .hero-profile-menu {
+  .hero-top-bar--compact .hero-profile-menu,
+  .hero-top-bar--fixed .hero-profile-menu {
     min-width: 164px;
   }
 
   .hero-top-bar--hero .hero-grade-panel,
-  .hero-top-bar--compact .hero-grade-panel {
+  .hero-top-bar--compact .hero-grade-panel,
+  .hero-top-bar--fixed .hero-grade-panel {
     right: -26px;
     width: min(88vw, 460px);
     padding: 28px 16px 20px;
   }
 
   .hero-top-bar--hero .hero-grade-current-rank,
-  .hero-top-bar--compact .hero-grade-current-rank {
+  .hero-top-bar--compact .hero-grade-current-rank,
+  .hero-top-bar--fixed .hero-grade-current-rank {
     left: 16px;
   }
 
   .hero-top-bar--hero .hero-grade-track-line,
-  .hero-top-bar--compact .hero-grade-track-line {
+  .hero-top-bar--compact .hero-grade-track-line,
+  .hero-top-bar--fixed .hero-grade-track-line {
     left: 24px;
     right: 24px;
     top: 32px;
   }
 
   .hero-top-bar--hero .hero-grade-track-dots,
-  .hero-top-bar--compact .hero-grade-track-dots {
+  .hero-top-bar--compact .hero-grade-track-dots,
+  .hero-top-bar--fixed .hero-grade-track-dots {
     left: 26px;
     right: 26px;
     top: 25px;
   }
 
   .hero-top-bar--hero .hero-grade-track-dot,
-  .hero-top-bar--compact .hero-grade-track-dot {
+  .hero-top-bar--compact .hero-grade-track-dot,
+  .hero-top-bar--fixed .hero-grade-track-dot {
     width: 10px;
     height: 10px;
   }
 
   .hero-top-bar--hero .hero-grade-icons,
-  .hero-top-bar--compact .hero-grade-icons {
+  .hero-top-bar--compact .hero-grade-icons,
+  .hero-top-bar--fixed .hero-grade-icons {
     padding: 0 10px;
   }
 
   .hero-top-bar--hero .hero-grade-icon-slot,
-  .hero-top-bar--compact .hero-grade-icon-slot {
+  .hero-top-bar--compact .hero-grade-icon-slot,
+  .hero-top-bar--fixed .hero-grade-icon-slot {
     width: 52px;
     height: 52px;
   }
@@ -956,6 +1087,13 @@
 
   .hero-top-bar--compact .hero-auth {
     right: 12px;
+  }
+
+  .hero-top-bar--fixed .hero-login-trigger {
+    min-width: 70px;
+    height: 36px;
+    padding: 0 14px;
+    font-size: 13px;
   }
 
   .hero-login-overlay {

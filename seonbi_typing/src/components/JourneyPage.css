@@ -1,14 +1,12 @@
 .journey-page {
+  --journey-fixed-header-height: clamp(78px, 8vw, 108px);
   width: 100%;
   min-height: 100vh;
-  height: 100vh;
   overflow-x: hidden;
-  overflow-y: auto;
   background-color: #f3efe3;
   background-size: 100% auto;
   background-position: top center;
   background-repeat: repeat-y;
-  scroll-snap-type: y mandatory;
 }
 
 .journey-panel {
@@ -16,8 +14,6 @@
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .hero-panel .hero-section {
@@ -25,12 +21,48 @@
   height: 100%;
 }
 
+.second-panel {
+  height: calc(100vh + clamp(180px, 28vh, 320px));
+  overflow: visible;
+  background: transparent;
+}
+
+.second-panel-sticky {
+  position: sticky;
+  top: var(--journey-fixed-header-height);
+  height: calc(100vh - var(--journey-fixed-header-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.second-panel-frame {
+  width: 100%;
+  height: 100%;
+  padding: calc((100vh - var(--journey-fixed-header-height)) * 0.096) 3.6vw;
+  box-sizing: border-box;
+}
+
+.second-panel-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.6;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: opacity 3s linear;
+}
+
+.second-panel.is-revealed .second-panel-image {
+  opacity: 1;
+}
+
 .map-panel {
   position: relative;
   width: 100%;
   height: 100vh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -68,6 +100,10 @@
 }
 
 @media (max-width: 768px) {
+  .journey-page {
+    --journey-fixed-header-height: 74px;
+  }
+
   .map-panel-inner {
     padding-top: 16px;
     padding-bottom: 20px;
