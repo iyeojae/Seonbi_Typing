@@ -39,19 +39,20 @@
 .problem-copy-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 0;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: clamp(-34px, -4.4vh, -68px);
   position: relative;
-  z-index: 1;
+  z-index: 3;
+  transform: translateY(clamp(20px, 3vh, 44px));
   width: 100%;
   flex: 0 0 auto;
 }
 
 .problem-step-chip {
-  min-width: 88px;
-  height: 34px;
-  padding: 0 16px;
+  min-width: clamp(104px, 8.6vw, 138px);
+  height: clamp(40px, 3.5vw, 48px);
+  padding: 0 20px;
   border-radius: 999px;
   border: 1px solid rgba(31, 31, 28, 0.18);
   background: rgba(247, 245, 238, 0.72);
@@ -59,24 +60,22 @@
   align-items: center;
   justify-content: center;
   font-family: Pretendard, "Noto Sans KR", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: clamp(15px, 1.1vw, 18px);
+  font-weight: 800;
   color: rgba(31, 31, 28, 0.72);
+  box-shadow: 0 10px 18px rgba(31, 31, 28, 0.08);
 }
 
 .problem-heading {
   margin: 0;
   width: 100%;
+  max-width: min(100%, 820px);
   font-family: Pretendard, "Noto Sans KR", sans-serif;
-  font-size: clamp(22px, 3.4vw, 42px);
+  font-size: clamp(26px, 3.5vw, 46px);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.045em;
   color: #11110f;
-  text-align: left;
-}
-
-.problem-heading.is-intro {
   text-align: center;
 }
 
@@ -87,6 +86,7 @@
   grid-template-columns: minmax(200px, 270px) minmax(360px, 1fr);
   gap: clamp(18px, 4vw, 48px);
   align-items: end;
+  padding-top: clamp(28px, 4.6vh, 64px);
   width: 100%;
   margin: 0 auto;
   flex: 0 0 auto;
@@ -104,7 +104,7 @@
 }
 
 .problem-character {
-  width: min(100%, 220px);
+  width: min(100%, 252px);
   height: auto;
   display: block;
   user-select: none;
@@ -421,6 +421,16 @@
 .problem-word-card {
   min-width: 98px;
   padding: 0 18px;
+}
+
+.problem-word-button,
+.problem-word-card {
+  min-width: clamp(132px, 10vw, 176px);
+  height: 60px;
+  padding: 0 24px;
+  border-radius: 16px;
+  font-size: clamp(21px, 1.7vw, 28px);
+  font-weight: 600;
 }
 
 .problem-word-button,
@@ -750,6 +760,11 @@
     gap: 18px;
   }
 
+  .problem-copy-block {
+    margin-bottom: clamp(-28px, -4vh, -52px);
+    transform: translateY(clamp(16px, 2.6vh, 30px));
+  }
+
   .problem-scene.is-arrange-phase {
     gap: 14px;
   }
@@ -770,6 +785,15 @@
     font-size: 18px;
   }
 
+  .problem-word-button,
+  .problem-word-card {
+    min-width: 124px;
+    height: 54px;
+    padding: 0 20px;
+    border-radius: 15px;
+    font-size: 20px;
+  }
+
   .problem-primary-action-bar {
     padding-top: 12px;
   }
@@ -788,12 +812,14 @@
 
   .problem-copy-block {
     gap: 6px;
+    margin-bottom: 0;
+    transform: none;
   }
 
   .problem-step-chip {
-    min-width: 72px;
-    height: 30px;
-    font-size: 12px;
+    min-width: 84px;
+    height: 34px;
+    font-size: 13px;
   }
 
   .problem-heading {
@@ -803,6 +829,7 @@
   .problem-scene {
     grid-template-columns: 1fr;
     gap: 12px;
+    padding-top: 0;
   }
 
   .problem-scene.is-arrange-phase {
@@ -815,7 +842,7 @@
   }
 
   .problem-character {
-    width: min(38vw, 150px);
+    width: min(42vw, 170px);
   }
 
   .problem-dialogue-stack {
@@ -908,6 +935,15 @@
     border-radius: 12px;
     padding: 0 14px;
     font-size: 16px;
+  }
+
+  .problem-word-button,
+  .problem-word-card {
+    min-width: 108px;
+    height: 48px;
+    padding: 0 18px;
+    border-radius: 14px;
+    font-size: 18px;
   }
 
   .problem-arrange-actions {
