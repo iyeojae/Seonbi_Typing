@@ -207,16 +207,6 @@ function HeroSection({ authUser = null, className = "", onAuthChange, onLogout, 
           onClick={handleOverlayClick}
         >
           <div className="hero-login-card" onClick={(event) => event.stopPropagation()}>
-            <button
-              type="button"
-              className="hero-login-close"
-              onClick={closeLogin}
-              aria-label="로그인 닫기"
-              disabled={isSubmitting}
-            >
-              ×
-            </button>
-
             <div className="hero-login-left">
               <img
                 className="hero-login-logo"
@@ -239,6 +229,9 @@ function HeroSection({ authUser = null, className = "", onAuthChange, onLogout, 
                 >
                   로그인
                 </button>
+                  <span className="auth-tab-separator" aria-hidden="true">
+                    |
+                  </span>
 
                 <button
                   type="button"

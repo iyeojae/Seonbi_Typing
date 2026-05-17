@@ -8,6 +8,8 @@ import {
   getRankGroup,
 } from "./heroUi";
 
+const LOGIN_BUTTON_SRC = `${process.env.PUBLIC_URL}/assets/login-bt.svg`;
+
 function HeroTopBar({
   authUser,
   isLoginDisabled = false,
@@ -233,8 +235,14 @@ function HeroTopBar({
                 disabled={isLoginDisabled}
                 aria-expanded={isLoginOpen}
                 aria-controls={loginOverlayId}
+                aria-label={isLoginOpen ? "로그인 닫기" : "로그인 열기"}
               >
-                {isLoginOpen ? "닫기" : "로그인"}
+                <img
+                  className="hero-login-trigger-image"
+                  src={LOGIN_BUTTON_SRC}
+                  alt=""
+                  aria-hidden="true"
+                />
               </button>
             )
           )}
