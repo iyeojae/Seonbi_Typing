@@ -233,6 +233,81 @@
   border-radius: 999px;
 }
 
+.map-notice-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(22, 18, 12, 0.28);
+  backdrop-filter: blur(4px);
+}
+
+.map-notice-card {
+  position: relative;
+  width: min(100%, 360px);
+}
+
+.map-notice-card-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+.map-notice-card-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 34px 34px 30px;
+  text-align: center;
+}
+
+.map-notice-card-message {
+  margin: 0;
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: clamp(22px, 2vw, 30px);
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: -0.05em;
+  color: rgba(255, 251, 244, 0.98);
+  text-shadow: 0 10px 22px rgba(11, 20, 48, 0.36);
+}
+
+.map-notice-card-button {
+  min-width: 112px;
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 20px rgba(11, 20, 48, 0.18);
+  font-family: Pretendard, "Noto Sans KR", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fffdf8;
+  cursor: pointer;
+  transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.map-notice-card-button:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 14px 24px rgba(11, 20, 48, 0.22);
+}
+
+.map-notice-card-button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.86);
+  outline-offset: 3px;
+}
+
 @media (max-width: 1599px) {
   .map-stage {
     width: 90%;
@@ -289,5 +364,18 @@
 
   .map-step-label {
     font-size: clamp(12px, 3.5vw, 18px);
+  }
+
+  .map-notice-overlay {
+    padding: 18px;
+  }
+
+  .map-notice-card-content {
+    gap: 18px;
+    padding: 26px 24px 24px;
+  }
+
+  .map-notice-card-message {
+    font-size: 20px;
   }
 }

@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import "./MapSection.css";
 
+const ALREADY_SOLVED_NOTICE = "이미 푼 문제는 다시 풀 수 없습니다. 푼 문제 목록에서 확인해보세요.";
+const ALREADY_PROB_CARD_PATH = `${process.env.PUBLIC_URL}/map/already-prob.png`;
+
 const STEP_SLOTS = [
   { id: 1, label: "1", x: 31.61, y: 4.76 },
   { id: 2, label: "2", x: 17.01, y: 16.05 },
@@ -37,6 +40,7 @@ function MapSection({ className = "", onSelectStep, totalSolvedCount = 0 }) {
   const safeSolvedCount = Math.max(0, Number(totalSolvedCount) || 0);
   const totalPageCount = Math.max(1, Math.ceil((safeSolvedCount + 1) / MAP_PAGE_SIZE));
   const [currentPage, setCurrentPage] = useState(() => getInitialPage(safeSolvedCount));
+  const [isSolvedNoticeOpen, setIsSolvedNoticeOpen] = useState(false);
   const currentPageSteps = useMemo(
     () =>
       STEP_SLOTS.map((step) => {
@@ -65,6 +69,19 @@ function MapSection({ className = "", onSelectStep, totalSolvedCount = 0 }) {
 
   function handleNextPage() {
     setCurrentPage((prev) => Math.min(totalPageCount, prev + 1));
+  }
+
+  function handleStepSelect(step) {
+    if (step.isSolved) {
+      setIsSolvedNoticeOpen(true);
+      return;
+    }
+
+    onSelectStep?.(step.id);
+  }
+
+  function handleCloseSolvedNotice() {
+    setIsSolvedNoticeOpen(false);
   }
 
   return (
@@ -97,12 +114,12 @@ function MapSection({ className = "", onSelectStep, totalSolvedCount = 0 }) {
               className={`map-step-marker ${step.isSolved ? "is-solved" : ""} ${
                 step.isCurrent ? "is-current" : ""
               }`}
-              onClick={() => onSelectStep?.(step.id)}
+              onClick={() => handleStepSelect(step)}
               style={{
                 "--x": `${step.x}%`,
                 "--y": `${step.y}%`,
               }}
-              aria-label={`${step.label}단계${step.isSolved ? " 복습 가능" : ""}`}
+              aria-label={`${step.label}단계${step.isSolved ? " 이미 완료됨" : ""}`}
             >
               <img className="map-step-icon" src="/map/step.svg" alt="" aria-hidden="true" />
               {step.isSolved && <span className="map-step-solved-badge" aria-hidden="true">풂</span>}
@@ -123,6 +140,38 @@ function MapSection({ className = "", onSelectStep, totalSolvedCount = 0 }) {
         >
           {">"}
         </button>
+      )}
+
+      {isSolvedNoticeOpen && (
+        <div
+          className="map-notice-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="이미 푼 문제 안내"
+          onClick={handleCloseSolvedNotice}
+        >
+          <div className="map-notice-card" onClick={(event) => event.stopPropagation()}>
+            <img
+              className="map-notice-card-image"
+              src={ALREADY_PROB_CARD_PATH}
+              alt=""
+              aria-hidden="true"
+              draggable="false"
+            />
+
+            <div className="map-notice-card-content">
+              <p className="map-notice-card-message">{ALREADY_SOLVED_NOTICE}</p>
+
+              <button
+                type="button"
+                className="map-notice-card-button"
+                onClick={handleCloseSolvedNotice}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

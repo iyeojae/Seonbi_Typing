@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   clearProblemProgress,
   getSavedProblemProgress,
@@ -12,6 +12,7 @@ import { HERO_PATH } from "./heroUi";
 import "./ProblemPage.css";
 
 const PROB_PATH = `${process.env.PUBLIC_URL}/prob`;
+const MAP_PATH = `${process.env.PUBLIC_URL}/map`;
 const EMPTY_INTRO_LINES = ["", "", ""];
 const INTRO_LINE_COUNT = 3;
 const INTRO_LETTER_REVEAL_DELAY = 52;
@@ -23,6 +24,7 @@ const GENERIC_COPY_INCORRECT = "띄어쓰기와 문장 부호를 다시 한 번 
 const GENERIC_COPY_CORRECT = "좋다. 훈장님이 준 문장을 또렷하게 잘 옮겨 적었구나.";
 const GENERIC_BLIND_INCORRECT = "아직 뜻풀이의 결이 조금 어긋났구나. 다시 한 번 차분히 생각해 보거라.";
 const GENERIC_BLIND_CORRECT = "좋다. 뜻을 네 것으로 잘 풀어냈구나. 이제 지도로 돌아가 보거라.";
+const ALREADY_SOLVED_NOTICE = "이미 푼 문제는 다시 풀 수 없습니다.";
 
 const STONE_DECORATIONS = [
   { file: "stone1.svg", className: "problem-stone problem-stone--top-right" },
@@ -81,7 +83,16 @@ function isBlindStageSolved(response) {
   );
 }
 
-function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHistory }) {
+function isAlreadyCompletedProblemError(message) {
+  if (typeof message !== "string") {
+    return false;
+  }
+
+  const normalizedMessage = message.trim().toLowerCase();
+  return normalizedMessage.includes("already completed");
+}
+
+function ProblemPage({ historyId, onExitProblem }) {
   const cachedProblem = getSavedProblemProgress(historyId);
   const [problemData, setProblemData] = useState(() => cachedProblem);
   const [loadState, setLoadState] = useState(() => (cachedProblem ? "ready" : "loading"));
@@ -89,8 +100,11 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
   const [revealedLines, setRevealedLines] = useState(EMPTY_INTRO_LINES);
   const [activeLineIndex, setActiveLineIndex] = useState(0);
   const [problemPhase, setProblemPhase] = useState("intro");
-  const [selectedWords, setSelectedWords] = useState([]);
-  const [usedOptionIndexes, setUsedOptionIndexes] = useState([]);
+  const [arrangedWordIndexes, setArrangedWordIndexes] = useState([]);
+  const [draggedWordIndex, setDraggedWordIndex] = useState(null);
+  const [activeDropIndex, setActiveDropIndex] = useState(null);
+  const [isBankDropActive, setIsBankDropActive] = useState(false);
+  const [isAlreadySolvedError, setIsAlreadySolvedError] = useState(false);
   const [copyInput, setCopyInput] = useState("");
   const [blindInput, setBlindInput] = useState("");
   const [phaseMessageTarget, setPhaseMessageTarget] = useState("");
@@ -108,8 +122,8 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
   const introLine2 = meaning;
   const introLine3 = getIntroThirdLine(readingText);
   const orderGuideLine = originalText;
-  const copyGuideLine = `${meaning}\n이제는 그냥 치지 말고 한 글자 한 글자 새기면서 입력해 보거라.`;
-  const blindGuideLine = `${originalText}\n이제는 외운 대로 베끼지 말고, 뜻을 이해한 대로 적어 보거라.`;
+  const copyGuideLine = `${meaning} 이제는 그냥 치지 말고 한 글자 한 글자 새기면서 입력해 보거라.`;
+  const blindGuideLine = `${originalText} 이제는 외운 대로 베끼지 말고, 뜻을 이해한 대로 적어 보거라.`;
   const isIntroPhase = problemPhase === "intro";
   const isOrderPhase = problemPhase === "ORDER";
   const isCopyPhase = problemPhase === "COPY_TYPING";
@@ -119,6 +133,16 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
     !isIntroPhase &&
     phaseMessageTarget.length > 0 &&
     phaseMessageText.length < phaseMessageTarget.length;
+  const arrangedWords = arrangedWordIndexes
+    .map((index) => shuffledWords[index])
+    .filter((word) => typeof word === "string" && word.length > 0);
+  const availableWordIndexes = shuffledWords.reduce((indexes, _, index) => {
+    if (!arrangedWordIndexes.includes(index)) {
+      indexes.push(index);
+    }
+
+    return indexes;
+  }, []);
   const currentGuideLine = isOrderPhase
     ? orderGuideLine
     : isCopyPhase
@@ -126,7 +150,7 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
       : blindGuideLine;
   const isPhasePanelReady =
     !isIntroPhase && (phaseMessageTone !== "guide" || phaseMessageText === currentGuideLine);
-  const arrangedSentence = buildSentence(selectedWords);
+  const arrangedSentence = buildSentence(arrangedWords);
   const currentBubbleToneClassName =
     phaseMessageTone === "positive"
       ? "is-positive"
@@ -141,7 +165,7 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
       : canAdvancePhase
         ? isPhaseMessageTyping
         : isOrderPhase
-          ? selectedWords.length !== shuffledWords.length || isSubmitting || isPhaseMessageTyping
+          ? arrangedWordIndexes.length !== shuffledWords.length || isSubmitting || isPhaseMessageTyping
           : isCopyPhase
             ? !copyInput.trim() || isSubmitting || isPhaseMessageTyping
             : !blindInput.trim() || isSubmitting || isPhaseMessageTyping;
@@ -158,6 +182,7 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
     }
 
     setLoadError("");
+      setIsAlreadySolvedError(false);
 
     let isDisposed = false;
 
@@ -168,6 +193,7 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
         }
 
         setProblemData(response);
+        setIsAlreadySolvedError(false);
         setLoadState("ready");
       })
       .catch((error) => {
@@ -181,7 +207,11 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
           return;
         }
 
-        setLoadError(error.message || "문제를 불러오지 못했습니다.");
+        const nextMessage = error.message || "문제를 불러오지 못했습니다.";
+        const isSolvedError = isAlreadyCompletedProblemError(nextMessage);
+
+        setLoadError(isSolvedError ? ALREADY_SOLVED_NOTICE : nextMessage);
+        setIsAlreadySolvedError(isSolvedError);
         setLoadState("error");
       });
 
@@ -198,8 +228,10 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
     setRevealedLines(EMPTY_INTRO_LINES);
     setActiveLineIndex(0);
     setProblemPhase("intro");
-    setSelectedWords([]);
-    setUsedOptionIndexes([]);
+    setArrangedWordIndexes([]);
+    setDraggedWordIndex(null);
+    setActiveDropIndex(null);
+    setIsBankDropActive(false);
     setCopyInput("");
     setBlindInput("");
     setPhaseMessageTarget("");
@@ -277,8 +309,10 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
   }
 
   function handleStartOrderPhase() {
-    setSelectedWords([]);
-    setUsedOptionIndexes([]);
+    setArrangedWordIndexes([]);
+    setDraggedWordIndex(null);
+    setActiveDropIndex(null);
+    setIsBankDropActive(false);
     showGuideMessage("ORDER", orderGuideLine);
   }
 
@@ -292,26 +326,176 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
     showGuideMessage("BLIND_TYPING", blindGuideLine);
   }
 
-  function handleWordClick(word, index) {
-    if (!isOrderPhase || isSubmitting || canAdvancePhase || usedOptionIndexes.includes(index)) {
-      return;
-    }
-
-    setSelectedWords((prev) => [...prev, word]);
-    setUsedOptionIndexes((prev) => [...prev, index]);
+  function clearArrangeDragState() {
+    setDraggedWordIndex(null);
+    setActiveDropIndex(null);
+    setIsBankDropActive(false);
   }
 
-  function handleResetOrder() {
-    if (!isOrderPhase || isSubmitting || canAdvancePhase) {
+  function restoreOrderGuideState() {
+    if (canAdvancePhase) {
       return;
     }
 
-    setSelectedWords([]);
-    setUsedOptionIndexes([]);
     setPhaseMessageTone("guide");
     setPhaseMessageTarget(orderGuideLine);
     setPhaseMessageText(orderGuideLine);
     setCharacterMood("normal");
+  }
+
+  function handleArrangeWordDragStart(event, wordIndex) {
+    if (!isOrderPhase || isSubmitting || canAdvancePhase) {
+      event.preventDefault();
+      return;
+    }
+
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", String(wordIndex));
+    setDraggedWordIndex(wordIndex);
+  }
+
+  function handleArrangeWordDragEnd() {
+    clearArrangeDragState();
+  }
+
+  function moveWordToDropIndex(wordIndex, dropIndex) {
+    setArrangedWordIndexes((prev) => {
+      const currentIndex = prev.indexOf(wordIndex);
+      const next = currentIndex === -1 ? [...prev] : prev.filter((index) => index !== wordIndex);
+      const adjustedDropIndex = currentIndex !== -1 && currentIndex < dropIndex
+        ? dropIndex - 1
+        : dropIndex;
+      const normalizedDropIndex = Math.max(0, Math.min(adjustedDropIndex, next.length));
+
+      next.splice(normalizedDropIndex, 0, wordIndex);
+      return next;
+    });
+
+    restoreOrderGuideState();
+  }
+
+  function removeWordFromArrangement(wordIndex) {
+    setArrangedWordIndexes((prev) => prev.filter((index) => index !== wordIndex));
+    restoreOrderGuideState();
+  }
+
+  function handleArrangeDropZoneDragOver(event, dropIndex) {
+    if (!isOrderPhase || isSubmitting || canAdvancePhase) {
+      return;
+    }
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+
+    if (activeDropIndex !== dropIndex) {
+      setActiveDropIndex(dropIndex);
+    }
+  }
+
+  function handleArrangeDrop(event, dropIndex) {
+    if (!isOrderPhase || isSubmitting || canAdvancePhase) {
+      return;
+    }
+
+    event.preventDefault();
+    const droppedWordIndex = Number.parseInt(event.dataTransfer.getData("text/plain"), 10);
+    const nextWordIndex = Number.isInteger(droppedWordIndex) ? droppedWordIndex : draggedWordIndex;
+
+    if (Number.isInteger(nextWordIndex)) {
+      moveWordToDropIndex(nextWordIndex, dropIndex);
+    }
+
+    clearArrangeDragState();
+  }
+
+  function getCardDropIndex(event, arrangedIndex) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const pointerX = event.clientX - rect.left;
+
+    return pointerX >= rect.width / 2 ? arrangedIndex + 1 : arrangedIndex;
+  }
+
+  function handleArrangeCardDragOver(event, arrangedIndex) {
+    if (!isOrderPhase || isSubmitting || canAdvancePhase) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = "move";
+    setActiveDropIndex(getCardDropIndex(event, arrangedIndex));
+    setIsBankDropActive(false);
+  }
+
+  function handleArrangeCardDrop(event, arrangedIndex) {
+    if (!isOrderPhase || isSubmitting || canAdvancePhase) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    const droppedWordIndex = Number.parseInt(event.dataTransfer.getData("text/plain"), 10);
+    const nextWordIndex = Number.isInteger(droppedWordIndex) ? droppedWordIndex : draggedWordIndex;
+
+    if (Number.isInteger(nextWordIndex)) {
+      moveWordToDropIndex(nextWordIndex, getCardDropIndex(event, arrangedIndex));
+    }
+
+    clearArrangeDragState();
+  }
+
+  function handleArrangeSequenceDragOver(event) {
+    if (!isOrderPhase || isSubmitting || canAdvancePhase || event.target !== event.currentTarget) {
+      return;
+    }
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    setActiveDropIndex(arrangedWordIndexes.length);
+    setIsBankDropActive(false);
+  }
+
+  function handleArrangeSequenceDrop(event) {
+    if (!isOrderPhase || isSubmitting || canAdvancePhase || event.target !== event.currentTarget) {
+      return;
+    }
+
+    event.preventDefault();
+    const droppedWordIndex = Number.parseInt(event.dataTransfer.getData("text/plain"), 10);
+    const nextWordIndex = Number.isInteger(droppedWordIndex) ? droppedWordIndex : draggedWordIndex;
+
+    if (Number.isInteger(nextWordIndex)) {
+      moveWordToDropIndex(nextWordIndex, arrangedWordIndexes.length);
+    }
+
+    clearArrangeDragState();
+  }
+
+  function handleArrangeBankDragOver(event) {
+    if (!isOrderPhase || isSubmitting || canAdvancePhase) {
+      return;
+    }
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    setIsBankDropActive(true);
+    setActiveDropIndex(null);
+  }
+
+  function handleArrangeBankDrop(event) {
+    if (!isOrderPhase || isSubmitting || canAdvancePhase) {
+      return;
+    }
+
+    event.preventDefault();
+    const droppedWordIndex = Number.parseInt(event.dataTransfer.getData("text/plain"), 10);
+    const nextWordIndex = Number.isInteger(droppedWordIndex) ? droppedWordIndex : draggedWordIndex;
+
+    if (Number.isInteger(nextWordIndex) && arrangedWordIndexes.includes(nextWordIndex)) {
+      removeWordFromArrangement(nextWordIndex);
+    }
+
+    clearArrangeDragState();
   }
 
   function handleCopyInputChange(event) {
@@ -480,26 +664,16 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
         backgroundImage: `url(${process.env.PUBLIC_URL}/assets/paper-texture.png)`,
       }}
     >
-      <header className="problem-header">
-        <img className="problem-header-image" src={`${PROB_PATH}/header.png`} alt="" aria-hidden="true" />
-        <div className="problem-header-overlay">
-          <HeroTopBar
-            authUser={authUser}
-            onLogoClick={onExitProblem}
-            onLogout={onLogout}
-            onOpenHistory={onOpenHistory}
-            showLoginTrigger={false}
-            variant="compact"
-          />
-        </div>
-      </header>
+      <div className="problem-logo-bar">
+        <HeroTopBar onLogoClick={onExitProblem} showLoginTrigger={false} variant="compact" />
+      </div>
 
       <section className="problem-stage" aria-label={`${historyId}단계 학습 문제`}>
         <div className="problem-copy-block">
           <span className="problem-step-chip">
             {problemData?.reviewMode ? `${historyId}단계 복습` : `${historyId}단계`}
           </span>
-          <h1 className="problem-heading">
+          <h1 className={`problem-heading ${isIntroPhase ? "is-intro" : ""}`}>
             {isIntroPhase
               ? "훈장님 말씀을 차근차근 새겨 보거라"
               : isOrderPhase
@@ -518,13 +692,39 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
           </div>
         ) : loadState === "error" ? (
           <div className="problem-typing-panel">
-            <p className="problem-typing-caption">{loadError || "문제를 불러오지 못했느니라."}</p>
+            {isAlreadySolvedError ? (
+              <div className="problem-notice-card" role="alert" aria-live="assertive">
+                <img
+                  className="problem-notice-card-image"
+                  src={`${MAP_PATH}/already-prob.png`}
+                  alt=""
+                  aria-hidden="true"
+                  draggable="false"
+                />
 
-            <div className="problem-arrange-actions">
-              <button type="button" className="problem-reset-button" onClick={onExitProblem}>
-                지도로 돌아가기
-              </button>
-            </div>
+                <div className="problem-notice-card-content">
+                  <p className="problem-notice-card-message">{loadError}</p>
+
+                  <button
+                    type="button"
+                    className="problem-notice-card-button"
+                    onClick={onExitProblem}
+                  >
+                    지도로 돌아가기
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="problem-typing-caption">{loadError || "문제를 불러오지 못했느니라."}</p>
+
+                <div className="problem-arrange-actions">
+                  <button type="button" className="problem-reset-button" onClick={onExitProblem}>
+                    지도로 돌아가기
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         ) : (
           <>
@@ -581,46 +781,93 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
             {isOrderPhase && isPhasePanelReady && (
               <div className="problem-arrange-panel">
                 <p className="problem-arrange-caption">
-                  제시된 단어들을 차례로 눌러 문장을 자연스럽게 이어 보거라.
+                  제시된 단어 카드를 끌어와 순서를 맞추고, 사이에 놓아 자리를 바꾸어 보거라.
                 </p>
 
                 <div className="problem-arrange-sentence" aria-live="polite">
-                  <span
+                  <div
                     className={`problem-arrange-fill problem-arrange-fill--full ${
-                      selectedWords.length > 0 ? "has-content" : "is-empty"
+                      arrangedWordIndexes.length > 0 ? "has-content" : "is-empty"
                     }`}
+                    onDragLeave={() => setActiveDropIndex(null)}
                   >
-                    {selectedWords.length > 0 ? arrangedSentence : "문장을 완성해 보거라"}
-                  </span>
+                    <div
+                      className="problem-arrange-card-sequence"
+                      role="list"
+                      aria-label="완성 중인 문장"
+                      onDragOver={handleArrangeSequenceDragOver}
+                      onDrop={handleArrangeSequenceDrop}
+                    >
+                      <div
+                        className={`problem-arrange-drop-slot ${activeDropIndex === 0 ? "is-active" : ""} ${
+                          arrangedWordIndexes.length === 0 ? "is-empty" : ""
+                        }`}
+                        onDragOver={(event) => handleArrangeDropZoneDragOver(event, 0)}
+                        onDrop={(event) => handleArrangeDrop(event, 0)}
+                        aria-label="첫 단어 위치"
+                      >
+                        {arrangedWordIndexes.length === 0 && (
+                          <span className="problem-arrange-placeholder">
+                            단어 카드를 이곳으로 끌어와 문장을 완성해 보거라
+                          </span>
+                        )}
+                      </div>
+
+                      {arrangedWordIndexes.map((wordIndex, index) => (
+                        <Fragment key={`${problemData.problemId}-arranged-${wordIndex}`}> 
+                          <button
+                            type="button"
+                            className={`problem-word-card ${draggedWordIndex === wordIndex ? "is-dragging" : ""}`}
+                            draggable={!isSubmitting && !canAdvancePhase}
+                            onDragStart={(event) => handleArrangeWordDragStart(event, wordIndex)}
+                            onDragEnd={handleArrangeWordDragEnd}
+                            onDragOver={(event) => handleArrangeCardDragOver(event, index)}
+                            onDrop={(event) => handleArrangeCardDrop(event, index)}
+                            aria-label={`${shuffledWords[wordIndex]} 단어 카드`}
+                          >
+                            {shuffledWords[wordIndex]}
+                          </button>
+
+                          <div
+                            className={`problem-arrange-drop-slot ${
+                              activeDropIndex === index + 1 ? "is-active" : ""
+                            }`}
+                            onDragOver={(event) => handleArrangeDropZoneDragOver(event, index + 1)}
+                            onDrop={(event) => handleArrangeDrop(event, index + 1)}
+                            aria-label={`${index + 2}번째 단어 위치`}
+                          />
+                        </Fragment>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="problem-arrange-bank" aria-label="단어 선택지">
-                  {shuffledWords.map((word, index) => {
-                    const isUsed = usedOptionIndexes.includes(index);
-
-                    return (
+                <div
+                  className={`problem-arrange-bank ${isBankDropActive ? "is-drop-active" : ""}`}
+                  aria-label="단어 선택지"
+                  onDragOver={handleArrangeBankDragOver}
+                  onDragLeave={() => setIsBankDropActive(false)}
+                  onDrop={handleArrangeBankDrop}
+                >
+                  {availableWordIndexes.length > 0 ? (
+                    availableWordIndexes.map((index) => (
                       <button
                         key={`${problemData.problemId}-word-${index + 1}`}
                         type="button"
-                        className={`problem-word-button ${isUsed ? "is-used" : ""}`}
-                        onClick={() => handleWordClick(word, index)}
-                        disabled={isUsed || isSubmitting || canAdvancePhase}
+                        className="problem-word-button"
+                        draggable={!isSubmitting && !canAdvancePhase}
+                        onDragStart={(event) => handleArrangeWordDragStart(event, index)}
+                        onDragEnd={handleArrangeWordDragEnd}
+                        disabled={isSubmitting || canAdvancePhase}
                       >
-                        {word}
+                        {shuffledWords[index]}
                       </button>
-                    );
-                  })}
-                </div>
-
-                <div className="problem-arrange-actions">
-                  <button
-                    type="button"
-                    className="problem-reset-button"
-                    onClick={handleResetOrder}
-                    disabled={isSubmitting || canAdvancePhase}
-                  >
-                    초기화
-                  </button>
+                    ))
+                  ) : (
+                    <p className="problem-arrange-bank-empty">
+                      모든 단어를 올려두었구나. 순서를 바꾸려면 카드를 다시 끌어 사이에 놓아 보거라.
+                    </p>
+                  )}
                 </div>
               </div>
             )}
@@ -705,14 +952,16 @@ function ProblemPage({ authUser, historyId, onExitProblem, onLogout, onOpenHisto
               </div>
             )}
 
-            <button
-              type="button"
-              className="problem-next-button"
-              onClick={handlePrimaryAction}
-              disabled={isPrimaryButtonDisabled}
-            >
-              {primaryButtonLabel}
-            </button>
+            <div className="problem-primary-action-bar">
+              <button
+                type="button"
+                className="problem-next-button"
+                onClick={handlePrimaryAction}
+                disabled={isPrimaryButtonDisabled}
+              >
+                {primaryButtonLabel}
+              </button>
+            </div>
 
             {STONE_DECORATIONS.map((stone) => (
               <img
