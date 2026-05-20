@@ -3,6 +3,7 @@ import "./JourneyPage.css";
 import FestivalSection from "./FestivalSection";
 import HeroSection from "./HeroSection";
 import MapSection from "./MapSection";
+import TourSection from "./TourSection";
 
 const SECOND_SECTION_SRC = `${process.env.PUBLIC_URL}/assets/second-section.png`;
 const SECOND_SECTION_ANIMATION_MS = 3000;
@@ -210,6 +211,8 @@ function JourneyPage({ authUser, onAuthChange, onLogout, onOpenHistory, onSelect
       </section>
 
       <FestivalSection />
+
+      <TourSection />
     </main>
   );
 }
