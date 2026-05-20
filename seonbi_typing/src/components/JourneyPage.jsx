@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import "./JourneyPage.css";
+import FestivalSection from "./FestivalSection";
 import HeroSection from "./HeroSection";
 import MapSection from "./MapSection";
 
-const ORNAMENT_SRC = `${process.env.PUBLIC_URL}/intro/intro-factor.svg`;
 const SECOND_SECTION_SRC = `${process.env.PUBLIC_URL}/assets/second-section.png`;
 const SECOND_SECTION_ANIMATION_MS = 3000;
 const SCROLL_LOCK_KEYS = new Set([
@@ -202,20 +202,14 @@ function JourneyPage({ authUser, onAuthChange, onLogout, onOpenHistory, onSelect
 
       <section className="journey-panel map-panel" aria-label="학습 지도">
         <div className="map-panel-inner">
-          <img
-            className="map-page-factor"
-            src={ORNAMENT_SRC}
-            alt=""
-            aria-hidden="true"
-            draggable="false"
-          />
-
           <MapSection
             onSelectStep={onSelectProblem}
             totalSolvedCount={authUser?.totalSolvedCount ?? 0}
           />
         </div>
       </section>
+
+      <FestivalSection />
     </main>
   );
 }

@@ -3,18 +3,21 @@ import "./MapSection.css";
 
 const ALREADY_SOLVED_NOTICE = "이미 푼 문제는 다시 풀 수 없습니다. 푼 문제 목록에서 확인해보세요.";
 const ALREADY_PROB_CARD_PATH = `${process.env.PUBLIC_URL}/map/already-prob.png`;
+const MAP_IMAGE_PATH = `${process.env.PUBLIC_URL}/map/map-big.png`;
+const STEP_ICON_PATH = `${process.env.PUBLIC_URL}/map/step.svg`;
+const STEP_HOVER_ICON_PATH = `${process.env.PUBLIC_URL}/map/step-onclick.svg`;
 
 const STEP_SLOTS = [
-  { id: 1, label: "1", x: 31.61, y: 4.76 },
-  { id: 2, label: "2", x: 17.01, y: 16.05 },
-  { id: 3, label: "3", x: 36.45, y: 17.24 },
-  { id: 4, label: "4", x: 69.56, y: 26.87 },
-  { id: 5, label: "5", x: 75.9, y: 44.95 },
-  { id: 6, label: "6", x: 80.07, y: 66.94 },
-  { id: 7, label: "7", x: 45.54, y: 66.11 },
-  { id: 8, label: "8", x: 62.3, y: 80.5 },
-  { id: 9, label: "9", x: 38.78, y: 86.44 },
-  { id: 10, label: "10", x: 15.93, y: 89.77 },
+  { id: 1, label: "1", x: 40.5, y: 5.9 },
+  { id: 2, label: "2", x: 27.6, y: 15.5 },
+  { id: 3, label: "3", x: 44.1, y: 22.7 },
+  { id: 4, label: "4", x: 68.9, y: 31.6 },
+  { id: 5, label: "5", x: 77.1, y: 42.1 },
+  { id: 6, label: "6", x: 73.8, y: 54.9 },
+  { id: 7, label: "7", x: 61.5, y: 65.4 },
+  { id: 8, label: "8", x: 74.2, y: 76.9 },
+  { id: 9, label: "9", x: 48.3, y: 86.1 },
+  { id: 10, label: "10", x: 19.4, y: 90.8 },
 ];
 
 const MAP_PAGE_SIZE = STEP_SLOTS.length;
@@ -85,7 +88,7 @@ function MapSection({ className = "", onSelectStep, totalSolvedCount = 0 }) {
   }
 
   return (
-    <div className={rootClassName} aria-label="물결 지도">
+    <div className={rootClassName} aria-label="학습 지도">
       {currentPage > 1 && (
         <button
           type="button"
@@ -97,37 +100,58 @@ function MapSection({ className = "", onSelectStep, totalSolvedCount = 0 }) {
         </button>
       )}
 
-      <div className="map-stage">
-        <img className="map-wave-image" src="/map/map-wave.png" alt="" aria-hidden="true" />
+      <div className="map-stage-shell">
+        <div className="map-stage">
+          <img
+            className="map-wave-image"
+            src={MAP_IMAGE_PATH}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+          />
 
-        {totalPageCount > 1 && (
-          <div className="map-page-indicator" aria-live="polite">
-            {`${currentPage} / ${totalPageCount}`}
+          {totalPageCount > 1 && (
+            <div className="map-page-indicator" aria-live="polite">
+              {`${currentPage} / ${totalPageCount}`}
+            </div>
+          )}
+
+          <div className="map-step-list" aria-label="학습 단계">
+            {currentPageSteps.map((step) => (
+              <button
+                key={step.id}
+                type="button"
+                className={`map-step-marker ${step.isSolved ? "is-solved" : ""} ${
+                  step.isCurrent ? "is-current" : ""
+                }`}
+                onClick={() => handleStepSelect(step)}
+                style={{
+                  "--x": `${step.x}%`,
+                  "--y": `${step.y}%`,
+                }}
+                aria-label={`${step.label}단계${step.isSolved ? " 이미 완료됨" : ""}`}
+              >
+                <img
+                  className="map-step-icon map-step-icon--default"
+                  src={STEP_ICON_PATH}
+                  alt=""
+                  aria-hidden="true"
+                  draggable="false"
+                />
+                <img
+                  className="map-step-icon map-step-icon--hover"
+                  src={STEP_HOVER_ICON_PATH}
+                  alt=""
+                  aria-hidden="true"
+                  draggable="false"
+                />
+                {step.isSolved && <span className="map-step-solved-badge" aria-hidden="true">풂</span>}
+                <span className={`map-step-label ${step.labelClassName}`}>
+                  {step.label}
+                </span>
+              </button>
+            ))}
           </div>
-        )}
-
-        <div className="map-step-list" aria-label="학습 단계">
-          {currentPageSteps.map((step) => (
-            <button
-              key={step.id}
-              type="button"
-              className={`map-step-marker ${step.isSolved ? "is-solved" : ""} ${
-                step.isCurrent ? "is-current" : ""
-              }`}
-              onClick={() => handleStepSelect(step)}
-              style={{
-                "--x": `${step.x}%`,
-                "--y": `${step.y}%`,
-              }}
-              aria-label={`${step.label}단계${step.isSolved ? " 이미 완료됨" : ""}`}
-            >
-              <img className="map-step-icon" src="/map/step.svg" alt="" aria-hidden="true" />
-              {step.isSolved && <span className="map-step-solved-badge" aria-hidden="true">풂</span>}
-              <span className={`map-step-label ${step.labelClassName}`}>
-                {step.label}
-              </span>
-            </button>
-          ))}
         </div>
       </div>
 

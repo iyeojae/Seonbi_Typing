@@ -1,13 +1,13 @@
 .map-section {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: auto;
   min-height: 0;
   background: transparent;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   justify-content: center;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 .map-nav-button {
@@ -41,17 +41,28 @@
 }
 
 .map-nav-button--prev {
-  left: clamp(4px, 1.2vw, 18px);
+  left: clamp(8px, 1.8vw, 24px);
 }
 
 .map-nav-button--next {
-  right: clamp(4px, 1.2vw, 18px);
+  right: clamp(8px, 1.8vw, 24px);
+}
+
+.map-stage-shell {
+  width: 100%;
+  height: auto;
+  padding-inline: 5%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .map-stage {
   position: relative;
-  width: 90%;
-  height: 100%;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4804 / 11392;
   margin: 0 auto;
   background: transparent;
   overflow: visible;
@@ -82,7 +93,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;
   object-position: center center;
   display: block;
   user-select: none;
@@ -103,9 +114,7 @@
   left: var(--x);
   top: var(--y);
   transform: translate(-50%, -50%);
-  width: 6.34%;
-  min-width: 36px;
-  max-width: 76px;
+  width: clamp(42px, 8.8%, 84px);
   aspect-ratio: 1 / 1;
   border: 0;
   padding: 0;
@@ -116,7 +125,7 @@
   align-items: center;
   justify-content: center;
   pointer-events: auto;
-  transition: transform 0.18s ease;
+  transition: transform 0.22s ease;
 }
 
 .map-step-marker::before {
@@ -154,6 +163,17 @@
   user-select: none;
   pointer-events: none;
   z-index: 1;
+  transition: opacity 0.24s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.map-step-icon--default {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.map-step-icon--hover {
+  opacity: 0;
+  transform: scale(0.9);
 }
 
 .map-step-solved-badge {
@@ -227,6 +247,18 @@
   transform: translate(-50%, -50%) scale(1.06);
 }
 
+.map-step-marker:hover .map-step-icon--default,
+.map-step-marker:focus-visible .map-step-icon--default {
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+.map-step-marker:hover .map-step-icon--hover,
+.map-step-marker:focus-visible .map-step-icon--hover {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .map-step-marker:focus-visible {
   outline: 2px solid rgba(42, 64, 113, 0.8);
   outline-offset: 4px;
@@ -234,21 +266,12 @@
 }
 
 @media (max-width: 1599px) {
-  .map-stage {
-    width: 90%;
-  }
 }
 
 @media (min-width: 1600px) {
-  .map-stage {
-    width: 90%;
-  }
 }
 
 @media (min-width: 2000px) {
-  .map-stage {
-    width: 90%;
-  }
 }
 
 @media (max-width: 768px) {
@@ -259,16 +282,15 @@
   }
 
   .map-nav-button--prev {
-    left: 0;
+    left: 2px;
   }
 
   .map-nav-button--next {
-    right: 0;
+    right: 2px;
   }
 
-  .map-stage {
-    width: 90%;
-    height: 100%;
+  .map-stage-shell {
+    padding-inline: 5%;
   }
 
   .map-page-indicator {
